@@ -8,7 +8,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,11 +25,30 @@ fun NotesScreen(navController: NavController, viewModel: HomeViewModel = viewMod
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Mis Notas") })
+            TopAppBar(
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Mis Notas", color = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF4CAF50) // Verde
+                )
+            )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("newNoteScreen") }) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar nota")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                FloatingActionButton(
+                    onClick = { navController.navigate("newNoteScreen") },
+                    containerColor = Color(0xFF4CAF50)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Agregar nota", tint = Color.White)
+                }
             }
         }
     ) { padding ->

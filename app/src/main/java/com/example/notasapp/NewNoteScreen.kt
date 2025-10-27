@@ -1,9 +1,13 @@
 package com.example.notasapp
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -16,7 +20,23 @@ fun NewNoteScreen(navController: NavController, viewModel: HomeViewModel = viewM
     var description by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Nueva Nota") }) }
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text("Nueva Nota", color = Color.White)
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF4CAF50) // Verde
+                )
+            )
+        }
     ) { padding ->
         Column(
             modifier = Modifier
@@ -24,9 +44,19 @@ fun NewNoteScreen(navController: NavController, viewModel: HomeViewModel = viewM
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Título") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Título") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Descripción") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Descripción") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = {
@@ -36,7 +66,9 @@ fun NewNoteScreen(navController: NavController, viewModel: HomeViewModel = viewM
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Guardar Nota") }
+            ) {
+                Text("Guardar Nota")
+            }
         }
     }
 }

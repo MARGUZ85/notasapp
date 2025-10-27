@@ -19,6 +19,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _notasList = MutableStateFlow<List<NotaSQLite>>(emptyList())
     val notasList: StateFlow<List<NotaSQLite>> = _notasList
 
+    private val _mensajeConfirmacion = MutableStateFlow<String?>(null)
+    val mensajeConfirmacion: StateFlow<String?> = _mensajeConfirmacion
+
     init {
         loadNotas()
     }
@@ -33,29 +36,30 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     fun addNota(titulo: String, descripcion: String) {
         viewModelScope.launch {
-            Log.d("HomeViewModel", "Agregando nota: $titulo - $descripcion")
             repository.insertNota(titulo, descripcion)
+            _mensajeConfirmacion.value = "Nota agregada"
             loadNotas()
         }
     }
 
     fun deleteNota(id: Int) {
         viewModelScope.launch {
-            Log.d("HomeViewModel", "Eliminando nota con ID: $id")
             repository.deleteNota(id)
+            _mensajeConfirmacion.value = "Nota eliminada"
             loadNotas()
         }
     }
 
     fun updateNota(nota: NotaSQLite) {
         viewModelScope.launch {
-            Log.d("HomeViewModel", "Actualizando nota: $nota")
             val existente = repository.getNotaById(nota.id)
             if (existente != null) {
                 repository.updateNota(nota)
+                _mensajeConfirmacion.value = "Nota actualizada"
                 loadNotas()
             } else {
                 Log.w("HomeViewModel", "Nota con ID ${nota.id} no encontrada. No se actualiza.")
+                _mensajeConfirmacion.value = "Error: nota no encontrada"
             }
         }
     }
@@ -64,5 +68,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val nota = repository.getNotaById(id)
         Log.d("HomeViewModel", "Buscando nota por ID: $id → $nota")
         return nota
+    }
+
+    fun clearMensaje() {
+        _mensajeConfirmacion.value = null
     }
 }
