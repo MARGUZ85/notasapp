@@ -17,12 +17,13 @@ class MainActivity : ComponentActivity() {
                 Surface {
                     val navController = rememberNavController()
 
-                    NavHost(
-                        navController = navController,
-                        startDestination = "notesScreen"
-                    ) {
+                    NavHost(navController = navController, startDestination = "notesScreen") {
                         composable("notesScreen") { NotesScreen(navController) }
                         composable("newNoteScreen") { NewNoteScreen(navController) }
+                        composable("editNoteScreen/{notaId}") { backStackEntry ->
+                            val notaId = backStackEntry.arguments?.getString("notaId")?.toInt() ?: 0
+                            EditNoteScreen(navController, notaId)
+                        }
                     }
                 }
             }

@@ -8,40 +8,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
-data class NoteItem(val id: Int, val title: String, val description: String)
+import androidx.navigation.NavController
+import com.example.notasapp.Data.NotaSQLite
+import com.example.notasapp.ui.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesScreen(
-    navController: androidx.navigation.NavController,
-    viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
-    val homeUiState by viewModel.homeUiState.collectAsState()
+fun NotesScreen(navController: NavController, viewModel: HomeViewModel = viewModel()) {
+    val notas by viewModel.notasList.collectAsState()
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Mis Notas") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
+            TopAppBar(title = { Text("Mis Notas") })
         },
         floatingActionButton = {
-            Box(
-                Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                FloatingActionButton(onClick = { navController.navigate("newNoteScreen") }) {
-                    Icon(Icons.Default.Add, contentDescription = "Agregar nota")
-                }
+            FloatingActionButton(onClick = { navController.navigate("newNoteScreen") }) {
+                Icon(Icons.Default.Add, contentDescription = "Agregar nota")
             }
         }
     ) { padding ->
@@ -51,28 +37,30 @@ fun NotesScreen(
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            items(homeUiState.itemList) { note ->
-                NoteCard(note)
+            items(notas) { nota ->
+                NoteCard(nota, onClick = {
+                    navController.navigate("editNoteScreen/${nota.id}")
+                })
             }
         }
     }
 }
 
 @Composable
-fun NoteCard(note: NoteItem) {
+fun NoteCard(nota: NotaSQLite, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
-            .clickable { },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(note.title, style = MaterialTheme.typography.titleMedium)
+            Text(nota.titulo, style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                note.description,
+                nota.descripcion,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis

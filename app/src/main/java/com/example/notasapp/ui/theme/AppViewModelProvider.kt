@@ -1,23 +1,19 @@
-package com.example.notasapp
+package com.example.notasapp.ui
 
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 
-/**
- * Proveedor de ViewModels para la aplicación NotasApp.
- */
 object AppViewModelProvider {
-    val Factory = viewModelFactory {
-        initializer {
-            val application = this.asNotasApplication()
-            HomeViewModel(application.repository)
+    fun Factory(application: Application): ViewModelProvider.Factory {
+        return object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+                    @Suppress("UNCHECKED_CAST")
+                    return HomeViewModel(application) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
         }
     }
-}
-
-fun CreationExtras.asNotasApplication(): NotasApplication {
-    return (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as NotasApplication)
 }
